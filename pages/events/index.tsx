@@ -1,20 +1,17 @@
 
-
-import { InferGetServerSidePropsType, type GetServerSideProps } from 'next'
-
+import { useEffect, useState } from 'react'
+import { FaEye, FaTicketAlt } from 'react-icons/fa'
 import { Group, IconButton, Table } from '@chakra-ui/react'
 
-import { FaEye, FaTicketAlt } from 'react-icons/fa'
+import api, { PaginatedEvents } from '@/lib/api'
 
-import api, { type PaginatedEvents } from '@/lib/api/index'
+export default function Events() {
+  const [events, setEvents] = useState<PaginatedEvents>()
 
-export const getServerSideProps = (async () => {
-  const events = await api.events.list()
+  useEffect(() => {
+    api.events.list().then(setEvents)
+  }, [])
 
-  return { props: { events } }
-}) satisfies GetServerSideProps<{ events: PaginatedEvents }>
-
-export default function Events({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const tableInfo =
     <Table.Row>
       <Table.ColumnHeader>Título</Table.ColumnHeader>
@@ -24,6 +21,45 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
       <Table.ColumnHeader>Ações</Table.ColumnHeader>
     </Table.Row>
 
+  const loadingData =
+    <Table.Row>
+      <Table.Cell colSpan={5}>
+        Carregando
+      </Table.Cell>
+    </Table.Row>
+
+  const emptyData =
+    <Table.Row>
+      <Table.Cell colSpan={5}>
+        Sem Eventos
+      </Table.Cell>
+    </Table.Row>
+
+  const tableData = () => {
+    if (!events) return loadingData
+    if (events.items.length === 0) return emptyData
+
+    return events.items.map((event) => {
+      return <Table.Row key={event.id}>
+        <Table.Cell>{event.title}</Table.Cell>
+        <Table.Cell>{event.datetime}</Table.Cell>
+        <Table.Cell>{event.capacity}</Table.Cell>
+        <Table.Cell>{event.status}</Table.Cell>
+        <Table.Cell>
+          <Group>
+            <IconButton title="Visualizar Evento" colorPalette={"green"}>
+              <FaEye />
+            </IconButton>
+
+            <IconButton title="Comprar Ingresso" colorPalette={"blue"}>
+              <FaTicketAlt />
+            </IconButton>
+          </Group>
+        </Table.Cell>
+      </Table.Row>
+    })
+  }
+
   return (
     <Table.Root>
       <Table.Header>
@@ -31,27 +67,7 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
       </Table.Header>
 
       <Table.Body>
-        {
-          events.items.map((event) => {
-            return <Table.Row key={event.id}>
-              <Table.Cell>{event.title}</Table.Cell>
-              <Table.Cell>{event.datetime}</Table.Cell>
-              <Table.Cell>{event.capacity}</Table.Cell>
-              <Table.Cell>{event.status}</Table.Cell>
-              <Table.Cell>
-                <Group>
-                  <IconButton title="Visualizar Evento" colorPalette={"green"}>
-                    <FaEye />
-                  </IconButton>
-
-                  <IconButton title="Comprar Ingresso" colorPalette={"blue"}>
-                    <FaTicketAlt />
-                  </IconButton>
-                </Group>
-              </Table.Cell>
-            </Table.Row>
-          })
-        }
+        {tableData()}
       </Table.Body>
 
       <Table.Footer>
