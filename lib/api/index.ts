@@ -1,10 +1,13 @@
 
+import AuthEndpoint from './auth'
 import EventsEndpoint from './events'
 
 class API {
+  auth: AuthEndpoint
   events: EventsEndpoint
 
   constructor(endpoint: string) {
+    this.auth = new AuthEndpoint(endpoint)
     this.events = new EventsEndpoint(endpoint)
   }
 }

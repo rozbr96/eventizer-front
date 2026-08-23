@@ -17,7 +17,13 @@ export class APIEndpoint {
   }) {
     const { endpoint, method, body, query } = props
 
-    const requestOptions: RequestInit = { method }
+    const requestOptions: RequestInit = {
+      method,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
 
     const queryString = Object.entries(query || {}).map(([key, value]) => `${key}=${value}`).join('&')
     const url = `${this.endpoint}${endpoint}?${queryString}`
