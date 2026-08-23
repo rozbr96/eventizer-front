@@ -6,10 +6,10 @@ import { Group, IconButton, Table } from '@chakra-ui/react'
 
 import { FaEye, FaTicketAlt } from 'react-icons/fa'
 
-import api, { type PaginatedEvents } from '@/lib/api'
+import api, { type PaginatedEvents } from '@/lib/api/index'
 
 export const getServerSideProps = (async () => {
-  const events = await api.listEvents()
+  const events = await api.events.list()
 
   return { props: { events } }
 }) satisfies GetServerSideProps<{ events: PaginatedEvents }>
