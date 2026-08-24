@@ -40,6 +40,25 @@ class PurchasesEndpoint extends APIEndpoint {
     })
   }
 
+  supplyPersonalInfo(purchase_id: number, holder: string): Promise<Purchase> {
+    return new Promise((resolve, reject) => {
+      this.doRequest({
+        endpoint: `/purchases/${purchase_id}/supply-personal-info`,
+        method: 'POST',
+        body: { holder }
+      }).then(async (response) => {
+        const data = await response.json()
+
+        if (!response.ok) return reject(data)
+
+        const purchase = this.present(data)
+
+        this.cache.set(purchase.id, purchase)
+
+        resolve(purchase)
+      })
+    })
+  }
 
   get(purchase_id: number): Promise<Purchase> {
     return new Promise((resolve, reject) => {

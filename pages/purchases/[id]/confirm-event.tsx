@@ -73,6 +73,7 @@ export default function ConfirmEvent() {
           status: "success",
           message: "Evento confirmado com sucesso.",
         });
+        router.push(`/purchases/${purchase.id}/supply-personal-info`);
       })
       .catch(() => {
         setConfirmation({
