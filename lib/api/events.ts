@@ -1,6 +1,11 @@
 
 import { PaginatedResult, APIEndpoint } from './common-entities'
 
+export interface User {
+  id: number
+  name: string
+}
+
 export interface EventResponse<T = EventMetadataResponse> {
   id: number
   title: string
@@ -12,6 +17,7 @@ export interface EventResponse<T = EventMetadataResponse> {
   price_in_cents: number
   status: string
   organizer_id: number
+  organizer: User
   metadata: T
 }
 
@@ -43,6 +49,7 @@ export interface Event extends EventResponse<EventMetadata> {
 export interface EventMetadata extends EventMetadataResponse {
   poster_url: string
   backdrop_url: string
+  formatted_release_date: string
 }
 
 export type PaginatedEvents = PaginatedResult<Event>
@@ -69,6 +76,7 @@ const present = (event: EventResponse<EventMetadataResponse>): Event => {
     formatted_price: currencyFormatter.format(price),
     metadata: {
       ...event.metadata,
+      formatted_release_date: new Date(event.metadata.release_date).toLocaleDateString(),
       backdrop_url: `https://image.tmdb.org/t/p/original/${event.metadata.backdrop_path}`,
       poster_url: `https://image.tmdb.org/t/p/original/${event.metadata.poster_path}`
     }
