@@ -77,6 +77,7 @@ export default function SupplyPersonalInfo() {
         setPurchase(result);
         setHolder(result.holder || trimmedHolder);
         setStatus("success");
+        router.push(`/purchases/${result.id}/payment`);
       })
       .catch(() => {
         setStatus("error");

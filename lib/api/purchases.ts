@@ -60,6 +60,20 @@ class PurchasesEndpoint extends APIEndpoint {
     })
   }
 
+  pay(purchase_id: number, body: Record<string, unknown>) {
+    return new Promise<void>((resolve, reject) => {
+      this.doRequest({
+        endpoint: `/purchases/${purchase_id}/pay`,
+        method: 'POST',
+        body
+      }).then((response) => {
+        if (response.ok) return resolve()
+
+        reject()
+      })
+    })
+  }
+
   get(purchase_id: number): Promise<Purchase> {
     return new Promise((resolve, reject) => {
       this.doRequest({
