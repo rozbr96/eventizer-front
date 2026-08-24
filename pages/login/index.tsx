@@ -12,10 +12,12 @@ export default function Login() {
   })
 
   const login = () => {
+    const redirect = Array.isArray(router.query.redirect) ? router.query.redirect[0] : router.query.redirect
+
     api
       .auth
       .login(loginData)
-      .then(() => { router.push('/events') })
+      .then(() => { router.push(redirect || '/events') })
   }
 
   return (
@@ -40,4 +42,3 @@ export default function Login() {
     </Fieldset.Root>
   )
 }
-
