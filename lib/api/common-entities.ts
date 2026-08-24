@@ -77,14 +77,16 @@ export class APIEndpoint {
     method: 'GET' | 'POST',
     query?: Record<string, unknown>,
     body?: Record<string, unknown>,
+    headers?: HeadersInit,
   }) {
-    const { endpoint, method, body, query } = props
+    const { endpoint, method, body, query, headers } = props
 
     const requestOptions: RequestInit = {
       method,
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...headers,
       }
     }
 

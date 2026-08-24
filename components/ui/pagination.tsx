@@ -25,11 +25,7 @@ export default function Pagination({ page, totalPages, totalCount, getPageHref }
   }
 
   return (
-    <Group justify="space-between" width="100%" flexWrap="wrap" gap="3">
-      <Text color="gray.600" fontSize="sm">
-        Página {page} de {totalPages} • {totalCount} registros
-      </Text>
-
+    <Group flexDirection={"column"} alignItems="flex-start" flexWrap="wrap" gap="3">
       <Group gap="2" flexWrap="wrap">
         <Button asChild size="sm" variant="outline" disabled={page <= 1}>
           <Link href={getPageHref(page - 1)}>Anterior</Link>
@@ -51,6 +47,10 @@ export default function Pagination({ page, totalPages, totalCount, getPageHref }
           <Link href={getPageHref(page + 1)}>Próxima</Link>
         </Button>
       </Group>
+
+      <Text color="gray.600" fontSize="sm">
+        Página {page} de {totalPages} • {totalCount} registros
+      </Text>
     </Group>
   );
 }
