@@ -179,7 +179,11 @@ export default function Purchases() {
       </Box>
 
       <Box overflowX="auto">
-        <Table.Root>
+        <Table.Root css={{
+          "& th:not(:first-of-type), & td:not(:first-of-type), & td[colspan]": {
+            textAlign: "center",
+          },
+        }}>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>Compra</Table.ColumnHeader>

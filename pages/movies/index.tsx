@@ -213,7 +213,11 @@ export default function Movies() {
       </Flex>
 
       <Box overflowX="auto">
-        <Table.Root>
+        <Table.Root css={{
+          "& th:not(:first-of-type), & td:not(:first-of-type), & td[colspan]": {
+            textAlign: "center",
+          },
+        }}>
           <Table.Header>
             {tableInfo}
           </Table.Header>

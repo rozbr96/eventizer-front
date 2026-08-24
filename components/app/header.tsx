@@ -38,9 +38,9 @@ export default function Header() {
   }
 
   return (
-    <Box as="header" borderBottomWidth="1px" bg="white" position="sticky" top="0" zIndex="banner">
+    <Box as="header" bg="cyan.700" color="white" position="sticky" top="0" zIndex="banner" boxShadow="md">
       <Flex align="center" justify="space-between" maxW="1600px" mx="auto" px="6" py="3">
-        <Text asChild fontWeight="bold" fontSize="xl">
+        <Text asChild fontWeight="bold" fontSize="xl" letterSpacing="tight">
           <Link href="/events">Eventizer</Link>
         </Text>
 
@@ -51,7 +51,14 @@ export default function Header() {
                 const Icon = link.icon;
 
                 return (
-                  <Button key={link.href} asChild variant="ghost" size="sm">
+                  <Button
+                    key={link.href}
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    color="white"
+                    _hover={{ bg: "cyan.600", color: "white" }}
+                  >
                     <Link href={link.href}>
                       <Icon />
                       {link.label}
@@ -61,13 +68,19 @@ export default function Header() {
               })}
             </HStack>
 
-            <Text color="gray.700" fontSize="sm">
+            <Text color="cyan.50" fontSize="sm">
               {user.name}
             </Text>
 
             <Dialog.Root>
               <Dialog.Trigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  color="white"
+                  borderColor="cyan.100"
+                  _hover={{ bg: "cyan.600", color: "white" }}
+                >
                   <FaSignOutAlt />
                   Sair
                 </Button>
@@ -104,7 +117,7 @@ export default function Header() {
             </Dialog.Root>
           </HStack>
         ) : (
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" color="white" _hover={{ bg: "cyan.600", color: "white" }}>
             <Link href="/login">
               <FaSignInAlt />
               Login

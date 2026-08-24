@@ -9,13 +9,15 @@ import { Provider } from "@/components/ui/provider";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider>
-      <AuthProvider>
-        <Header />
+      <Box minH="100vh" bg="gray.50">
+        <AuthProvider>
+          <Header />
 
-        <Box maxW="1600px" mx="auto" px="6" py="6">
-          <Component {...pageProps} />
-        </Box>
-      </AuthProvider>
+          <Box maxW="1600px" mx="auto" px="6" py="6">
+            <Component {...pageProps} />
+          </Box>
+        </AuthProvider>
+      </Box>
     </Provider>
   )
 }

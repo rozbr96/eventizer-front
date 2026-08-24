@@ -227,7 +227,11 @@ export default function TicketVerifications() {
       </Flex>
 
       <Box overflowX="auto">
-        <Table.Root>
+        <Table.Root css={{
+          "& th:not(:first-of-type), & td:not(:first-of-type), & td[colspan]": {
+            textAlign: "center",
+          },
+        }}>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>Código do ingresso</Table.ColumnHeader>

@@ -70,7 +70,11 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
   return (
     <Stack gap="4">
       <Box overflowX="auto">
-        <Table.Root>
+        <Table.Root css={{
+          '& th:not(:first-of-type), & td:not(:first-of-type), & td[colspan]': {
+            textAlign: 'center',
+          },
+        }}>
           <Table.Header>
             {tableInfo}
           </Table.Header>
