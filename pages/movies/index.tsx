@@ -165,7 +165,7 @@ export default function Movies() {
         justify="space-between"
         gap="4"
         position="sticky"
-        top="0"
+        top="60px"
         zIndex="sticky"
         bg="gray.50"
         py="3"

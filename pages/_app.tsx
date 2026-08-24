@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <Header />
 
-        <Box maxW="1200px" mx="auto" px="6" py="6">
+        <Box maxW="1600px" mx="auto" px="6" py="6">
           <Component {...pageProps} />
         </Box>
       </AuthProvider>

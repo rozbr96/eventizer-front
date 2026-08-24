@@ -37,7 +37,7 @@ export default function Header() {
 
   return (
     <Box as="header" borderBottomWidth="1px" bg="white" position="sticky" top="0" zIndex="banner">
-      <Flex align="center" justify="space-between" maxW="1200px" mx="auto" px="6" py="3">
+      <Flex align="center" justify="space-between" maxW="1600px" mx="auto" px="6" py="3">
         <Text asChild fontWeight="bold" fontSize="xl">
           <Link href="/events">Eventizer</Link>
         </Text>
@@ -49,12 +49,12 @@ export default function Header() {
                 const Icon = link.icon;
 
                 return (
-                <Button key={link.href} asChild variant="ghost" size="sm">
-                  <Link href={link.href}>
-                    <Icon />
-                    {link.label}
-                  </Link>
-                </Button>
+                  <Button key={link.href} asChild variant="ghost" size="sm">
+                    <Link href={link.href}>
+                      <Icon />
+                      {link.label}
+                    </Link>
+                  </Button>
                 );
               })}
             </HStack>
