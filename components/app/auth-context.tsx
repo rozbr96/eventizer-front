@@ -7,6 +7,7 @@ type AuthContextValue = {
   user: User | null;
   setUser: (user: User | null) => void;
   refreshUser: () => Promise<User | null>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -28,12 +29,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }
 
+  const logout = () => {
+    return api.auth.logout()
+      .then(() => {
+        setUser(null);
+      });
+  }
+
   useEffect(() => {
     refreshUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, refreshUser }}>
+    <AuthContext.Provider value={{ user, setUser, refreshUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

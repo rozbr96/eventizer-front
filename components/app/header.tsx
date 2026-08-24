@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { Box, Button, Dialog, Flex, HStack, Portal, Text } from "@chakra-ui/react";
 
 import { useAuth } from "@/components/app/auth-context";
@@ -18,8 +20,18 @@ const linksByRole: Record<NonNullable<User["role"]>, Array<{ href: string; label
 };
 
 export default function Header() {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
   const links = user?.role ? linksByRole[user.role] : [];
+
+  const handleLogout = () => {
+    setLoggingOut(true);
+
+    logout()
+      .then(() => router.push("/login"))
+      .finally(() => setLoggingOut(false));
+  }
 
   return (
     <Box as="header" borderBottomWidth="1px" bg="white" position="sticky" top="0" zIndex="banner">
@@ -66,7 +78,7 @@ export default function Header() {
                         <Button variant="outline">Cancelar</Button>
                       </Dialog.ActionTrigger>
 
-                      <Button colorPalette="red">
+                      <Button colorPalette="red" loading={loggingOut} onClick={handleLogout}>
                         Sair
                       </Button>
                     </Dialog.Footer>

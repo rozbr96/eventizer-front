@@ -25,6 +25,17 @@ class AuthEndpoint extends APIEndpoint {
         })
     })
   }
+
+  logout() {
+    return new Promise<void>((resolve, reject) => {
+      this.doRequest({ endpoint: '/auth/logout', method: 'POST' })
+        .then(async (response) => {
+          if (response.ok) return resolve()
+
+          reject(await response.json())
+        })
+    })
+  }
 }
 
 export default AuthEndpoint
