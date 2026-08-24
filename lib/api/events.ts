@@ -92,9 +92,9 @@ class EventsEndpoint extends APIEndpoint {
     })
   }
 
-  list(): Promise<PaginatedEvents> {
+  list({ page = 1, itemsPerPage = 10 }: { page?: number, itemsPerPage?: number } = {}): Promise<PaginatedEvents> {
     return new Promise((resolve, reject) => {
-      this.doRequest({ endpoint: '/events', method: 'GET' })
+      this.doRequest({ endpoint: '/events', method: 'GET', query: { page, itemsPerPage } })
         .then(async (response) => {
           if (!response.ok) return reject()
 

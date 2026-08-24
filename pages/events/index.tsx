@@ -1,14 +1,23 @@
 
-import { Group, Table } from '@chakra-ui/react'
+import { Box, Group, Stack, Table } from '@chakra-ui/react'
 
 import api, { type PaginatedEvents } from '@/lib/api/index'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import EventDrawerButton from '@/components/events/drawer-button'
 import EventPurchaseButton from '@/components/events/purchase-button'
+import Pagination from '@/components/ui/pagination'
 
-export const getServerSideProps = (async () => {
-  const events = await api.events.list()
+const parsePage = (page: string | string[] | undefined) => {
+  const value = Array.isArray(page) ? page[0] : page
+  const parsedPage = Number(value)
+
+  return Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
+}
+
+export const getServerSideProps = (async ({ query }) => {
+  const page = parsePage(query.page)
+  const events = await api.events.list({ page })
 
   return { props: { events } }
 }) satisfies GetServerSideProps<{ events: PaginatedEvents }>
@@ -59,18 +68,29 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
   }
 
   return (
-    <Table.Root>
-      <Table.Header>
-        {tableInfo}
-      </Table.Header>
+    <Stack gap="4">
+      <Box overflowX="auto">
+        <Table.Root>
+          <Table.Header>
+            {tableInfo}
+          </Table.Header>
 
-      <Table.Body>
-        {tableData()}
-      </Table.Body>
+          <Table.Body>
+            {tableData()}
+          </Table.Body>
 
-      <Table.Footer>
-        {tableInfo}
-      </Table.Footer>
-    </Table.Root>
+          <Table.Footer>
+            {tableInfo}
+          </Table.Footer>
+        </Table.Root>
+      </Box>
+
+      <Pagination
+        page={events.page}
+        totalPages={events.total_pages}
+        totalCount={events.total_count}
+        getPageHref={(page) => `/events?page=${page}`}
+      />
+    </Stack>
   );
 }
