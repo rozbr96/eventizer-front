@@ -1,17 +1,19 @@
 
-import { useEffect, useState } from 'react'
-import { FaEye, FaTicketAlt } from 'react-icons/fa'
-import { Group, IconButton, Table } from '@chakra-ui/react'
+import { Group, Table } from '@chakra-ui/react'
 
-import api, { PaginatedEvents } from '@/lib/api'
+import api, { type PaginatedEvents } from '@/lib/api/index'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-export default function Events() {
-  const [events, setEvents] = useState<PaginatedEvents>()
+import EventDrawerButton from '@/components/events/drawer-button'
+import EventPurchaseButton from '@/components/events/purchase-button'
 
-  useEffect(() => {
-    api.events.list().then(setEvents)
-  }, [])
+export const getServerSideProps = (async () => {
+  const events = await api.events.list()
 
+  return { props: { events } }
+}) satisfies GetServerSideProps<{ events: PaginatedEvents }>
+
+export default function Events({ events }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const tableInfo =
     <Table.Row>
       <Table.ColumnHeader>Título</Table.ColumnHeader>
@@ -42,18 +44,14 @@ export default function Events() {
     return events.items.map((event) => {
       return <Table.Row key={event.id}>
         <Table.Cell>{event.title}</Table.Cell>
-        <Table.Cell>{event.datetime}</Table.Cell>
+        <Table.Cell>{event.formatted_datetime}</Table.Cell>
         <Table.Cell>{event.capacity}</Table.Cell>
-        <Table.Cell>{event.status}</Table.Cell>
+        <Table.Cell>{event.translated_status}</Table.Cell>
         <Table.Cell>
           <Group>
-            <IconButton title="Visualizar Evento" colorPalette={"green"}>
-              <FaEye />
-            </IconButton>
+            <EventDrawerButton event={event} />
 
-            <IconButton title="Comprar Ingresso" colorPalette={"blue"}>
-              <FaTicketAlt />
-            </IconButton>
+            <EventPurchaseButton eventId={event.id} />
           </Group>
         </Table.Cell>
       </Table.Row>

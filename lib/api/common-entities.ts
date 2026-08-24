@@ -1,4 +1,9 @@
 
+export interface User {
+  id: number
+  name: string
+}
+
 export interface PaginatedResult<T> {
   page: number
   items: Array<T>
