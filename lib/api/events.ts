@@ -1,7 +1,7 @@
 
 import { PaginatedResult, APIEndpoint } from './common-entities'
 
-export interface Event {
+export interface EventResponse<T = EventMetadataResponse> {
   id: number
   title: string
   description: string
@@ -12,10 +12,10 @@ export interface Event {
   price_in_cents: number
   status: string
   organizer_id: number
-  metadata: EventMetadata
+  metadata: T
 }
 
-export interface EventMetadata {
+export interface EventMetadataResponse {
   id: number
   adult: boolean
   title: string
@@ -33,21 +33,73 @@ export interface EventMetadata {
   original_language: string
 }
 
+export interface Event extends EventResponse<EventMetadata> {
+  formatted_datetime: string
+  price: number
+  formatted_price: string
+  translated_status: string
+}
+
+export interface EventMetadata extends EventMetadataResponse {
+  poster_url: string
+  backdrop_url: string
+}
+
 export type PaginatedEvents = PaginatedResult<Event>
+
+const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+
+const translateStatus = (status: string) => {
+  return {
+    published: 'Publicado',
+    canceled: 'Cancelado',
+    ongoing: 'Em Andamento',
+    done: 'Finalizado'
+  }[status] || status
+}
+
+const present = (event: EventResponse<EventMetadataResponse>): Event => {
+  const price = event.price_in_cents / 100
+
+  return {
+    ...event,
+    formatted_datetime: new Date(event.datetime).toLocaleString(),
+    price,
+    translated_status: translateStatus(event.status),
+    formatted_price: currencyFormatter.format(price),
+    metadata: {
+      ...event.metadata,
+      backdrop_url: `https://image.tmdb.org/t/p/original/${event.metadata.backdrop_path}`,
+      poster_url: `https://image.tmdb.org/t/p/original/${event.metadata.poster_path}`
+    }
+  }
+}
 
 export default class extends APIEndpoint {
   get(event_id: number): Promise<Event> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.doRequest({ endpoint: `/events/${event_id}`, method: 'GET' })
-        .then((response) => { resolve(response.json()) })
+        .then(async (response) => {
+          if (!response.ok) return reject()
+
+          const event = await response.json()
+
+          resolve(present(event))
+        })
     })
   }
 
   list(): Promise<PaginatedEvents> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.doRequest({ endpoint: '/events', method: 'GET' })
-        .then((response) => {
-          resolve(response.json())
+        .then(async (response) => {
+          if (!response.ok) return reject()
+
+          const results = await response.json()
+
+          results.items = results.items.map((item: EventResponse) => present(item))
+
+          resolve(results)
         })
     })
   }
