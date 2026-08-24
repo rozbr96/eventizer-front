@@ -1,9 +1,11 @@
 
-import { FaEye, FaTicketAlt } from 'react-icons/fa'
+import { FaTicketAlt } from 'react-icons/fa'
 import { Group, IconButton, Table } from '@chakra-ui/react'
 
 import api, { type PaginatedEvents } from '@/lib/api/index'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+
+import EventDrawerButton from '@/components/events/drawer-button'
 
 export const getServerSideProps = (async () => {
   const events = await api.events.list()
@@ -42,9 +44,9 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
     return events.items.map((event) => {
       return <Table.Row key={event.id}>
         <Table.Cell>{event.title}</Table.Cell>
-        <Table.Cell>{event.datetime}</Table.Cell>
+        <Table.Cell>{event.formatted_datetime}</Table.Cell>
         <Table.Cell>{event.capacity}</Table.Cell>
-        <Table.Cell>{event.status}</Table.Cell>
+        <Table.Cell>{event.translated_status}</Table.Cell>
         <Table.Cell>
           <Group>
             <IconButton title="Visualizar Evento" colorPalette={"green"}>
