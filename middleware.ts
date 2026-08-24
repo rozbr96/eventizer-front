@@ -1,16 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const apiEndpoint = "http://localhost:3000";
+import { authenticated } from "@/lib/auth/server";
 
 export async function middleware(request: NextRequest) {
-  const authResponse = await fetch(`${apiEndpoint}/auth/state`, {
-    method: "GET",
-    headers: {
-      cookie: request.headers.get("cookie") || "",
-    },
-  }).catch(() => null);
-
-  if (authResponse?.ok) return NextResponse.next();
+  if (await authenticated(request.headers)) return NextResponse.next();
 
   const loginUrl = new URL("/login", request.url);
   loginUrl.searchParams.set("redirect", `${request.nextUrl.pathname}${request.nextUrl.search}`);

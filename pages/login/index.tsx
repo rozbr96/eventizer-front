@@ -2,7 +2,23 @@ import { useState } from "react"
 import api from '@/lib/api';
 import { Field, Fieldset, IconButton, Input } from "@chakra-ui/react";
 import { FaSignInAlt } from "react-icons/fa";
+import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+
+import { authenticated } from "@/lib/auth/server";
+
+export const getServerSideProps = (async ({ req, query }) => {
+  if (!await authenticated(req.headers)) return { props: {} };
+
+  const redirect = Array.isArray(query.redirect) ? query.redirect[0] : query.redirect;
+
+  return {
+    redirect: {
+      destination: redirect || "/events",
+      permanent: false,
+    },
+  };
+}) satisfies GetServerSideProps;
 
 export default function Login() {
   const router = useRouter()
