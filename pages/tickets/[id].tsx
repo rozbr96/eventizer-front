@@ -121,6 +121,7 @@ export default function TicketPage() {
 
   const ticketDetails = [
     { label: "Titular", value: ticket.holder },
+    { label: "Documento", value: ticket.document_number },
     { label: "Consumido", value: ticket.consumed },
   ];
 
@@ -128,6 +129,7 @@ export default function TicketPage() {
     { label: "Compra", value: `#${ticket.purchase.id}` },
     { label: "Status", value: ticket.purchase.status },
     { label: "Titular", value: ticket.purchase.holder },
+    { label: "Documento", value: ticket.purchase.document_number },
     { label: "Cliente", value: ticket.purchase.client.name },
     { label: "Cliente ID", value: ticket.purchase.client_id },
     { label: "Evento ID", value: ticket.purchase.event_id },

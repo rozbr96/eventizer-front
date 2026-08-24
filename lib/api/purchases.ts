@@ -6,6 +6,7 @@ export interface PurchaseResponse {
   id: number
   status: string
   holder: string
+  document_number: string
   client_id: number
   event_id: number
   client: User
@@ -41,12 +42,12 @@ class PurchasesEndpoint extends APIEndpoint {
     })
   }
 
-  supplyPersonalInfo(purchase_id: number, holder: string): Promise<Purchase> {
+  supplyPersonalInfo(purchase_id: number, holder: string, document_number: string): Promise<Purchase> {
     return new Promise((resolve, reject) => {
       this.doRequest({
         endpoint: `/purchases/${purchase_id}/supply-personal-info`,
         method: 'POST',
-        body: { holder }
+        body: { holder, document_number }
       }).then(async (response) => {
         const data = await response.json()
 

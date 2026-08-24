@@ -5,6 +5,7 @@ import { type Purchase, type PurchaseResponse } from "./purchases";
 export interface TicketResponse {
   id: number;
   holder: string;
+  document_number: string;
   code: string;
   purchase: PurchaseResponse;
   consumed: boolean;

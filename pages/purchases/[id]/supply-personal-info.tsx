@@ -19,11 +19,18 @@ const parsePurchaseId = (id: string | string[] | undefined) => {
   return Number.isInteger(purchaseId) && purchaseId > 0 ? purchaseId : null;
 }
 
+const onlyDigits = (value: string) => value.replace(/\D/g, "");
+
+const formatDocument = (value: string) => {
+  return onlyDigits(value).slice(0, 14);
+}
+
 export default function SupplyPersonalInfo() {
   const router = useRouter();
   const purchaseId = router.isReady ? parsePurchaseId(router.query.id) : null;
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [holder, setHolder] = useState("");
+  const [documentNumber, setDocumentNumber] = useState("");
   const [error, setError] = useState<PurchaseError | null>(null);
   const [status, setStatus] = useState<PersonalInfoStatus>("idle");
 
@@ -46,6 +53,7 @@ export default function SupplyPersonalInfo() {
 
         setPurchase(result);
         setHolder(result.holder || "");
+        setDocumentNumber(result.document_number || "");
       })
       .catch(() => {
         if (!active) return;
@@ -64,18 +72,20 @@ export default function SupplyPersonalInfo() {
     if (!purchase) return;
 
     const trimmedHolder = holder.trim();
+    const trimmedDocumentNumber = onlyDigits(documentNumber);
 
-    if (!trimmedHolder) {
+    if (!trimmedHolder || !trimmedDocumentNumber) {
       setStatus("error");
       return;
     }
 
     setStatus("submitting");
 
-    api.purchases.supplyPersonalInfo(purchase.id, trimmedHolder)
+    api.purchases.supplyPersonalInfo(purchase.id, trimmedHolder, trimmedDocumentNumber)
       .then((result) => {
         setPurchase(result);
         setHolder(result.holder || trimmedHolder);
+        setDocumentNumber(result.document_number || trimmedDocumentNumber);
         setStatus("success");
         router.push(`/purchases/${result.id}/payment`);
       })
@@ -127,7 +137,7 @@ export default function SupplyPersonalInfo() {
                   </Heading>
 
                   <Text color="gray.600">
-                    Informe o nome do titular que usará este ingresso.
+                    Informe os dados do titular que usará este ingresso.
                   </Text>
                 </Box>
 
@@ -146,6 +156,22 @@ export default function SupplyPersonalInfo() {
                   />
                 </Field.Root>
 
+                <Field.Root>
+                  <Field.Label>
+                    Documento
+                  </Field.Label>
+
+                  <Input
+                    id="document"
+                    value={documentNumber}
+                    onChange={(event) => setDocumentNumber(formatDocument(event.target.value))}
+                    placeholder="Somente números"
+                    inputMode="numeric"
+                    mt="2"
+                    disabled={submitting}
+                  />
+                </Field.Root>
+
                 {status === "success" && (
                   <Text color="green.600" fontWeight="medium">
                     Dados pessoais enviados com sucesso.
@@ -154,7 +180,7 @@ export default function SupplyPersonalInfo() {
 
                 {status === "error" && (
                   <Text color="red.600" fontWeight="medium">
-                    Informe o nome do titular para continuar.
+                    Informe o nome e documento do titular para continuar.
                   </Text>
                 )}
 
