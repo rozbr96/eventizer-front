@@ -49,9 +49,7 @@ export default function Events({ events }: InferGetServerSidePropsType<typeof ge
         <Table.Cell>{event.translated_status}</Table.Cell>
         <Table.Cell>
           <Group>
-            <IconButton title="Visualizar Evento" colorPalette={"green"}>
-              <FaEye />
-            </IconButton>
+            <EventDrawerButton event={event} />
 
             <IconButton title="Comprar Ingresso" colorPalette={"blue"}>
               <FaTicketAlt />
