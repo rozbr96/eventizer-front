@@ -1,10 +1,5 @@
 
-import { PaginatedResult, APIEndpoint } from './common-entities'
-
-export interface User {
-  id: number
-  name: string
-}
+import { User, PaginatedResult, APIEndpoint } from './common-entities'
 
 export interface EventResponse<T = EventMetadataResponse> {
   id: number
