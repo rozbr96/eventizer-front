@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Box, Button, Dialog, Flex, HStack, Portal, Text } from "@chakra-ui/react";
-import { FaCalendarAlt, FaFilm, FaReceipt, FaSignInAlt, FaSignOutAlt, FaTimes } from "react-icons/fa";
+import { FaCalendarAlt, FaCheckCircle, FaFilm, FaReceipt, FaSignInAlt, FaSignOutAlt, FaTimes } from "react-icons/fa";
 import { type IconType } from "react-icons";
 
 import { useAuth } from "@/components/app/auth-context";
@@ -18,7 +18,9 @@ const linksByRole: Record<NonNullable<User["role"]>, Array<{ href: string; label
     { href: "/events", label: "Eventos", icon: FaCalendarAlt },
     { href: "/purchases", label: "Compras", icon: FaReceipt },
   ],
-  doorman: [],
+  doorman: [
+    { href: "/ticket-verifications", label: "Ingressos Validados", icon: FaCheckCircle },
+  ],
 };
 
 export default function Header() {
