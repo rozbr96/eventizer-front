@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
+import MovieEventDrawerButton from "@/components/movies/event-drawer-button";
 import Pagination from "@/components/ui/pagination";
 import api, { type MovieLanguage, type PaginatedMovies } from "@/lib/api";
 
 const movieLanguages: Array<{ label: string; value: MovieLanguage }> = [
-  { label: "Selecione", value: "" },
   { label: "Português", value: "pt-BR" },
   { label: "Inglês", value: "en-US" },
   { label: "Espanhol", value: "es-ES" },
@@ -33,7 +33,7 @@ const parseQuery = (query: string | string[] | undefined) => {
 const parseLanguage = (language: string | string[] | undefined): MovieLanguage => {
   const value = scalar(language);
 
-  return movieLanguages.some((movieLanguage) => movieLanguage.value === value) ? value as MovieLanguage : "";
+  return movieLanguages.some((movieLanguage) => movieLanguage.value === value) ? value as MovieLanguage : "pt-BR";
 }
 
 const pageHref = (page: number, query: string, language: MovieLanguage) => {
@@ -49,7 +49,7 @@ export default function Movies() {
   const router = useRouter();
   const page = router.isReady ? parsePage(router.query.page) : 1;
   const searchQuery = router.isReady ? parseQuery(router.query.query) : "";
-  const language = router.isReady ? parseLanguage(router.query.language) : "";
+  const language = router.isReady ? parseLanguage(router.query.language) : "pt-BR";
   const requestKey = `${page}:${searchQuery}:${language}`;
   const [movies, setMovies] = useState<PaginatedMovies | null>(null);
   const [loadedKey, setLoadedKey] = useState("");
@@ -90,12 +90,13 @@ export default function Movies() {
       <Table.ColumnHeader>Popularidade</Table.ColumnHeader>
       <Table.ColumnHeader>Nota</Table.ColumnHeader>
       <Table.ColumnHeader>Votos</Table.ColumnHeader>
+      <Table.ColumnHeader>Ações</Table.ColumnHeader>
     </Table.Row>
   );
 
   const emptyData = (
     <Table.Row>
-      <Table.Cell colSpan={6}>
+      <Table.Cell colSpan={7}>
         Sem filmes
       </Table.Cell>
     </Table.Row>
@@ -104,7 +105,7 @@ export default function Movies() {
   const tableData = () => {
     if (loading || !movies) return (
       <Table.Row>
-        <Table.Cell colSpan={6}>
+        <Table.Cell colSpan={7}>
           Carregando
         </Table.Cell>
       </Table.Row>
@@ -112,7 +113,7 @@ export default function Movies() {
 
     if (failed) return (
       <Table.Row>
-        <Table.Cell colSpan={6}>
+        <Table.Cell colSpan={7}>
           Não foi possível carregar os filmes
         </Table.Cell>
       </Table.Row>
@@ -141,6 +142,9 @@ export default function Movies() {
         <Table.Cell>{movie.popularity}</Table.Cell>
         <Table.Cell>{movie.vote_average}</Table.Cell>
         <Table.Cell>{movie.vote_count}</Table.Cell>
+        <Table.Cell>
+          <MovieEventDrawerButton movie={movie} />
+        </Table.Cell>
       </Table.Row>
     ));
   }
@@ -177,16 +181,16 @@ export default function Movies() {
           )}
         </Box>
 
-        <form style={{ display: "flex", justifyContent: "flex-end", flexShrink: 0 }}>
+        <form action="/movies" method="get" style={{ display: "flex", justifyContent: "flex-end", flexShrink: 0 }}>
           <Flex align="end" justify="flex-end" gap="3">
             <input type="hidden" name="page" value="1" />
 
             <Field.Root w="180px" flexShrink={0}>
               <Field.Label>Idioma Preferencial</Field.Label>
               <NativeSelect.Root>
-                <NativeSelect.Field name="language">
+                <NativeSelect.Field name="language" defaultValue={language}>
                   {movieLanguages.map((movieLanguage) => (
-                    <option selected={movieLanguage.value === language} key={movieLanguage.value} value={movieLanguage.value}>
+                    <option key={movieLanguage.value} value={movieLanguage.value}>
                       {movieLanguage.label}
                     </option>
                   ))}

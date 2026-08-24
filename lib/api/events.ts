@@ -1,6 +1,17 @@
 
 import { User, PaginatedResult, APIEndpoint } from './common-entities'
 
+export interface EventCreationInput {
+  title: string
+  description: string
+  datetime: string
+  address: string
+  address_title: string
+  capacity: number
+  price_in_cents: number
+  metadata: unknown
+}
+
 export interface EventResponse<T = EventMetadataResponse> {
   id: number
   title: string
@@ -79,6 +90,19 @@ export const presentEvent = (event: EventResponse<EventMetadataResponse>): Event
 }
 
 class EventsEndpoint extends APIEndpoint {
+  create(event: EventCreationInput): Promise<Event> {
+    return new Promise((resolve, reject) => {
+      this.doRequest({ endpoint: '/events', method: 'POST', body: { event } })
+        .then(async (response) => {
+          if (!response.ok) return reject()
+
+          const createdEvent = await response.json()
+
+          resolve(presentEvent(createdEvent))
+        })
+    })
+  }
+
   get(event_id: number): Promise<Event> {
     return new Promise((resolve, reject) => {
       this.doRequest({ endpoint: `/events/${event_id}`, method: 'GET' })
