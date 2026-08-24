@@ -3,14 +3,20 @@ import { useState } from "react";
 import { Accordion, CloseButton, Drawer, Image, Portal, Span } from "@chakra-ui/react";
 import { Event } from "@/lib/api";
 import { FaEye } from "react-icons/fa";
-import { IconButton } from "@chakra-ui/react";
-import { FaTicket } from "react-icons/fa6";
+import { Button } from "@chakra-ui/react";
+import EventPurchaseButton from "./purchase-button";
 
 export default function EventDrawerButton({ event }: { event: Event }) {
   const [open, setOpen] = useState(false)
 
+  const accordionValue = (source: object, key: string) => {
+    const value = (source as Record<string, unknown>)[key]
+
+    return value === null || value === undefined || value === "" ? "Não informado" : String(value)
+  }
+
   const accordionInfo = (
-    source: { [key: string]: any },
+    source: object,
     keyValuePairs: Array<{ key: string, value: string }>,
   ) => {
     return (
@@ -22,7 +28,7 @@ export default function EventDrawerButton({ event }: { event: Event }) {
               <Accordion.ItemIndicator />
             </Accordion.ItemTrigger>
             <Accordion.ItemContent>
-              <Accordion.ItemBody>{source[key]}</Accordion.ItemBody>
+              <Accordion.ItemBody>{accordionValue(source, key)}</Accordion.ItemBody>
             </Accordion.ItemContent>
           </Accordion.Item>
         ))}
@@ -50,9 +56,11 @@ export default function EventDrawerButton({ event }: { event: Event }) {
   return (
     <Drawer.Root size="lg" open={open} onOpenChange={(e) => setOpen(e.open)}>
       <Drawer.Trigger asChild>
-        <IconButton title="Visualizar Evento" colorPalette={"green"}>
+        <Button colorPalette={"green"}>
           <FaEye />
-        </IconButton>
+
+          Visualizar Evento
+        </Button>
       </Drawer.Trigger>
 
       <Portal>
@@ -73,11 +81,7 @@ export default function EventDrawerButton({ event }: { event: Event }) {
             </Drawer.Body>
 
             <Drawer.Footer>
-              <IconButton colorPalette={"blue"}>
-                <FaTicket />
-
-                Comprar Ingresso
-              </IconButton>
+              <EventPurchaseButton eventId={event.id} fullWidth />
             </Drawer.Footer>
 
             <Drawer.CloseTrigger asChild>
