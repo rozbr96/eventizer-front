@@ -30,7 +30,10 @@ export class APIEndpoint {
 
     try {
       const data = await response.clone().json()
-      const messages = this.errorMessagesFromDetails(data?.details)
+      const messages = [
+        ...this.errorMessagesFromDetails(data?.detail),
+        ...this.errorMessagesFromDetails(data?.details),
+      ]
 
       return messages.length > 0 ? messages : fallback
     } catch {
