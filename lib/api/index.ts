@@ -16,6 +16,8 @@ class API {
 }
 
 export * from './events'
+export * from './purchases'
 
-export default new API('http://localhost:3000')
+const api = new API('http://localhost:3000')
 
+export default api

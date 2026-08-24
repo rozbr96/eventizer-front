@@ -60,7 +60,7 @@ const translateStatus = (status: string) => {
   }[status] || status
 }
 
-const present = (event: EventResponse<EventMetadataResponse>): Event => {
+export const presentEvent = (event: EventResponse<EventMetadataResponse>): Event => {
   const price = event.price_in_cents / 100
 
   return {
@@ -78,7 +78,7 @@ const present = (event: EventResponse<EventMetadataResponse>): Event => {
   }
 }
 
-export default class extends APIEndpoint {
+class EventsEndpoint extends APIEndpoint {
   get(event_id: number): Promise<Event> {
     return new Promise((resolve, reject) => {
       this.doRequest({ endpoint: `/events/${event_id}`, method: 'GET' })
@@ -87,7 +87,7 @@ export default class extends APIEndpoint {
 
           const event = await response.json()
 
-          resolve(present(event))
+          resolve(presentEvent(event))
         })
     })
   }
@@ -100,7 +100,7 @@ export default class extends APIEndpoint {
 
           const results = await response.json()
 
-          results.items = results.items.map((item: EventResponse) => present(item))
+          results.items = results.items.map((item: EventResponse) => presentEvent(item))
 
           resolve(results)
         })
@@ -108,3 +108,4 @@ export default class extends APIEndpoint {
   }
 }
 
+export default EventsEndpoint

@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { FaTicketAlt } from "react-icons/fa";
 
@@ -7,6 +8,7 @@ import api from "@/lib/api";
 type PurchaseStatus = "idle" | "starting" | "started" | "failed";
 
 export default function EventPurchaseButton({ eventId, fullWidth = false }: { eventId: number; fullWidth?: boolean }) {
+  const router = useRouter();
   const [status, setStatus] = useState<PurchaseStatus>("idle");
 
   const starting = status === "starting";
@@ -18,8 +20,10 @@ export default function EventPurchaseButton({ eventId, fullWidth = false }: { ev
     setStatus("starting");
 
     try {
-      await api.purchases.start(eventId);
+      const purchase = await api.purchases.start(eventId);
+
       setStatus("started");
+      router.push(`/purchases/${purchase.id}/confirm-event`);
     } catch {
       setStatus("failed");
     }
