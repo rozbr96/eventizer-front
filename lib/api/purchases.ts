@@ -1,4 +1,4 @@
-import { APIEndpoint, type User } from "./common-entities";
+import { APIEndpoint, type PaginatedResult, type User } from "./common-entities";
 import { presentEvent, type Event, type EventMetadataResponse, type EventResponse } from "./events";
 import { cacheTicket, presentTicket, type Ticket, type TicketResponse } from "./tickets";
 
@@ -11,10 +11,21 @@ export interface PurchaseResponse {
   event_id: number
   client: User
   event: EventResponse<EventMetadataResponse>
+  ticket?: PurchaseTicketResponse | null
 }
 
 export interface Purchase extends Omit<PurchaseResponse, "event"> {
   event: Event
+}
+
+export type PaginatedPurchases = PaginatedResult<Purchase>
+
+export interface PurchaseTicketResponse {
+  id: number
+  holder: string
+  document_number: string
+  code: string
+  consumed: boolean
 }
 
 class PurchasesEndpoint extends APIEndpoint {
@@ -29,6 +40,32 @@ class PurchasesEndpoint extends APIEndpoint {
       ...purchase,
       event: presentEvent(purchase.event)
     }
+  }
+
+  list({ page = 1, itemsPerPage = 10 }: { page?: number, itemsPerPage?: number } = {}): Promise<PaginatedPurchases> {
+    return new Promise((resolve, reject) => {
+      this.doRequest({
+        endpoint: '/purchases',
+        method: 'GET',
+        query: { page, itemsPerPage }
+      }).then(async (response) => {
+        const data = await response.json()
+
+        if (!response.ok) return reject(data)
+
+        const purchases = data.items || []
+        const presentedPurchases = purchases.map((purchase: PurchaseResponse) => this.present(purchase))
+
+        presentedPurchases.forEach((purchase: Purchase) => {
+          this.cache.set(purchase.id, purchase)
+        })
+
+        resolve({
+          ...data,
+          items: presentedPurchases
+        })
+      })
+    })
   }
 
   confirmEvent(purchaseId: number) {
