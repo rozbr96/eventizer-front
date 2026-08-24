@@ -14,11 +14,28 @@ export interface PaginatedResult<T> {
 export class APIEndpoint {
   constructor(protected endpoint: string) { }
 
-  doRequest(props: {
+  private redirectToLogin() {
+    if (typeof window === 'undefined') return
+    if (window.location.pathname === '/login') return
+
+    const redirect = `${window.location.pathname}${window.location.search}`
+    const loginUrl = new URL('/login', window.location.origin)
+    loginUrl.searchParams.set('redirect', redirect)
+
+    window.location.href = loginUrl.toString()
+  }
+
+  private handleUnauthenticatedResponse(response: Response) {
+    if (response.status === 401) this.redirectToLogin()
+
+    return response
+  }
+
+  async doRequest(props: {
     endpoint: string,
     method: 'GET' | 'POST',
-    query?: {},
-    body?: {},
+    query?: Record<string, unknown>,
+    body?: Record<string, unknown>,
   }) {
     const { endpoint, method, body, query } = props
 
@@ -35,6 +52,6 @@ export class APIEndpoint {
 
     if (method === 'POST') requestOptions.body = JSON.stringify(body || {})
 
-    return fetch(url, requestOptions)
+    return fetch(url, requestOptions).then((response) => this.handleUnauthenticatedResponse(response))
   }
 }
