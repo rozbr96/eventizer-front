@@ -5,6 +5,7 @@ import { FaSignInAlt } from "react-icons/fa";
 import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
+import { useAuth } from "@/components/app/auth-context";
 import { authenticated } from "@/lib/auth/server";
 
 export const getServerSideProps = (async ({ req, query }) => {
@@ -22,6 +23,7 @@ export const getServerSideProps = (async ({ req, query }) => {
 
 export default function Login() {
   const router = useRouter()
+  const { refreshUser } = useAuth()
   const [loginData, setLoginData] = useState<{ email: string, password: string }>({
     email: '',
     password: ''
@@ -33,6 +35,7 @@ export default function Login() {
     api
       .auth
       .login(loginData)
+      .then(() => refreshUser())
       .then(() => { router.push(redirect || '/events') })
   }
 

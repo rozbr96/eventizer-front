@@ -4,6 +4,7 @@ import { toaster } from "@/components/ui/toaster"
 export interface User {
   id: number
   name: string
+  role?: 'organizer' | 'client' | 'doorman'
 }
 
 export interface PaginatedResult<T> {
