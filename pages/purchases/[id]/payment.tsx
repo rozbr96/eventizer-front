@@ -162,8 +162,9 @@ export default function Payment() {
     setStatus("submitting");
 
     api.purchases.pay(purchase.id, payBody())
-      .then(() => {
+      .then((ticket) => {
         setStatus("success");
+        router.push(`/tickets/${ticket.id}`);
       })
       .catch(() => {
         setStatus("error");

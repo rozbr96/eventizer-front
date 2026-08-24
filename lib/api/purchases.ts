@@ -1,5 +1,6 @@
 import { APIEndpoint, type User } from "./common-entities";
 import { presentEvent, type Event, type EventMetadataResponse, type EventResponse } from "./events";
+import { cacheTicket, presentTicket, type Ticket, type TicketResponse } from "./tickets";
 
 export interface PurchaseResponse {
   id: number
@@ -60,16 +61,18 @@ class PurchasesEndpoint extends APIEndpoint {
     })
   }
 
-  pay(purchase_id: number, body: Record<string, unknown>) {
-    return new Promise<void>((resolve, reject) => {
+  pay(purchase_id: number, body: Record<string, unknown>): Promise<Ticket> {
+    return new Promise((resolve, reject) => {
       this.doRequest({
         endpoint: `/purchases/${purchase_id}/pay`,
         method: 'POST',
         body
-      }).then((response) => {
-        if (response.ok) return resolve()
+      }).then(async (response) => {
+        const data = await response.json()
 
-        reject()
+        if (!response.ok) return reject(data)
+
+        resolve(cacheTicket(presentTicket(data as TicketResponse)))
       })
     })
   }
