@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Box, Button, Dialog, Flex, HStack, Portal, Text } from "@chakra-ui/react";
-import { FaCalendarAlt, FaCheckCircle, FaFilm, FaReceipt, FaSignInAlt, FaSignOutAlt, FaTimes } from "react-icons/fa";
+import { FaCalendarAlt, FaCheckCircle, FaFilm, FaReceipt, FaSignInAlt, FaSignOutAlt, FaTimes, FaUserPlus } from "react-icons/fa";
 import { type IconType } from "react-icons";
 
 import { useAuth } from "@/components/app/auth-context";
@@ -117,12 +117,21 @@ export default function Header() {
             </Dialog.Root>
           </HStack>
         ) : (
-          <Button asChild variant="ghost" size="sm" color="white" _hover={{ bg: "cyan.600", color: "white" }}>
-            <Link href="/login">
-              <FaSignInAlt />
-              Login
-            </Link>
-          </Button>
+          <HStack gap="2">
+            <Button asChild variant="ghost" size="sm" color="white" _hover={{ bg: "cyan.600", color: "white" }}>
+              <Link href="/login">
+                <FaSignInAlt />
+                Login
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" size="sm" color="white" borderColor="cyan.100" _hover={{ bg: "cyan.600", color: "white" }}>
+              <Link href="/signup">
+                <FaUserPlus />
+                Criar conta
+              </Link>
+            </Button>
+          </HStack>
         )}
       </Flex>
     </Box>

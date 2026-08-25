@@ -26,6 +26,17 @@ class AuthEndpoint extends APIEndpoint {
     })
   }
 
+  signup(props: { name: string, email: string, password: string }) {
+    return new Promise<void>((resolve, reject) => {
+      this.doRequest({ endpoint: '/auth/signup', method: 'POST', body: props })
+        .then(async (response) => {
+          if (response.ok) return resolve()
+
+          reject(await response.json())
+        })
+    })
+  }
+
   logout() {
     return new Promise<void>((resolve, reject) => {
       this.doRequest({ endpoint: '/auth/logout', method: 'POST' })

@@ -1,7 +1,8 @@
 import { type FormEvent, useState } from "react"
 import api from '@/lib/api';
-import { Box, Button, Field, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
-import { FaSignInAlt } from "react-icons/fa";
+import Link from "next/link";
+import { Box, Button, Field, Flex, Heading, Input, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
+import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
@@ -101,6 +102,16 @@ export default function Login() {
               <FaSignInAlt />
               Login
             </Button>
+
+            <Text color="gray.600" fontSize="sm" textAlign="center">
+              Ainda não tem uma conta?{" "}
+              <ChakraLink asChild colorPalette="teal" fontWeight="semibold">
+                <Link href="/signup">
+                  <FaUserPlus />
+                  Criar conta
+                </Link>
+              </ChakraLink>
+            </Text>
           </Stack>
         </Box>
       </form>
