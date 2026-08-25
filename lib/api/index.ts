@@ -26,6 +26,11 @@ export * from './movies'
 export * from './purchases'
 export * from './tickets'
 
-const api = new API('http://localhost:3000')
+const apiEndpoint =
+  typeof window === 'undefined'
+    ? process.env.NEXT_SERVER_API_HOST || 'http://localhost:3000'
+    : process.env.NEXT_PUBLIC_API_HOST || '/api'
+
+const api = new API(apiEndpoint)
 
 export default api

@@ -1,6 +1,6 @@
 import { type IncomingHttpHeaders } from "http";
 
-const apiEndpoint = "http://localhost:3000";
+const apiEndpoint = process.env.NEXT_SERVER_API_HOST || "http://localhost:3000";
 
 type AuthHeaders = Headers | IncomingHttpHeaders;
 
