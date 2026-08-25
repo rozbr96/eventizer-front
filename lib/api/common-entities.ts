@@ -66,12 +66,21 @@ export class APIEndpoint {
     window.location.href = loginUrl.toString()
   }
 
-  private async handleErrorResponse(response: Response) {
+  private async handleErrorResponse(
+    response: Response,
+    options: {
+      redirectOnUnauthorized: boolean,
+      showErrors: boolean
+    }
+  ) {
     if (response.ok) return response
 
-    this.showErrorToasts(await this.errorMessagesFromResponse(response))
+    if (options.showErrors)
+      this.showErrorToasts(await this.errorMessagesFromResponse(response))
 
-    if (response.status === 401 || response.status === 403) this.redirectToLogin()
+    if (options.redirectOnUnauthorized
+      && (response.status === 401 || response.status === 403)
+    ) this.redirectToLogin()
 
     return response
   }
@@ -82,8 +91,10 @@ export class APIEndpoint {
     query?: Record<string, unknown>,
     body?: Record<string, unknown>,
     headers?: HeadersInit,
+    redirectOnUnauthorized?: boolean,
+    showErrors?: boolean,
   }) {
-    const { endpoint, method, body, query, headers } = props
+    const { endpoint, method, body, query, headers, redirectOnUnauthorized = true, showErrors = true } = props
 
     const requestOptions: RequestInit = {
       method,
@@ -100,9 +111,9 @@ export class APIEndpoint {
     if (method === 'POST') requestOptions.body = JSON.stringify(body || {})
 
     return fetch(url, requestOptions)
-      .then((response) => this.handleErrorResponse(response))
+      .then((response) => this.handleErrorResponse(response, { redirectOnUnauthorized, showErrors }))
       .catch((error) => {
-        this.showErrorToasts([this.fallbackErrorMessage])
+        if (showErrors) this.showErrorToasts([this.fallbackErrorMessage])
 
         throw error
       })

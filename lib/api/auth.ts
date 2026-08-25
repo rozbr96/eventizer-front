@@ -4,7 +4,12 @@ import { APIEndpoint, type User } from './common-entities'
 class AuthEndpoint extends APIEndpoint {
   state(): Promise<User> {
     return new Promise((resolve, reject) => {
-      this.doRequest({ endpoint: '/auth/state', method: 'GET' })
+      this.doRequest({
+        endpoint: '/auth/state',
+        method: 'GET',
+        redirectOnUnauthorized: false,
+        showErrors: false
+      })
         .then(async (response) => {
           const data = await response.json()
 
@@ -29,6 +34,17 @@ class AuthEndpoint extends APIEndpoint {
   signup(props: { name: string, email: string, password: string }) {
     return new Promise<void>((resolve, reject) => {
       this.doRequest({ endpoint: '/auth/signup', method: 'POST', body: props })
+        .then(async (response) => {
+          if (response.ok) return resolve()
+
+          reject(await response.json())
+        })
+    })
+  }
+
+  activate(props: { email: string, token: string }) {
+    return new Promise<void>((resolve, reject) => {
+      this.doRequest({ endpoint: '/auth/activate', method: 'POST', body: props })
         .then(async (response) => {
           if (response.ok) return resolve()
 
